@@ -1,3 +1,25 @@
+var nodesByName = {}, links = [];
+var param = "ZZ_Chemie.csv";
+d3.csv("data/" + param, function(error, data) {
+  data.forEach(function (d) {
+
+    if(d.source != "" && d.target != "") { // Daten sind fehlerhaft warum?
+      // return only the distinct / unique nodes
+      nodesByName[d.source] = {name: d.source, group: d.skat };
+      if(d.target != "null"){
+        nodesByName[d.target] = {name: d.target, group: d.tkat  };
+        links.push({ "source": d.source,
+                           "target": d.target,
+                           "value": parseFloat(d.vuvalue),
+                           "count": parseInt(d.pathes)
+        });
+      }
+    } else {
+      // console.log("WARN: data error for - " + d.toString());
+    }
+ });
+
+console.log(nodesByName);
 
 var w = 940,
     h = 300,
@@ -60,4 +82,7 @@ d3.json(Data_url, function (punchcard_data) {
         .transition()
         .duration(800)
         .attr("r", function (d) { return r(d[2]); });
-});
+
+}); // d3.json
+
+}); // d3.csv call
