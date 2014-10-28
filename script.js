@@ -1,12 +1,12 @@
 var w = h = 650,
-    pad = 50, // oben
-    left_pad = 500,
+    padding_top = 10, // oben
+    padding_left = 300,
     label_pad = 100; // space for long labelnames
  
 var svg = d3.select("#chart")
         .append("svg")
-        .attr("width", w + left_pad)
-        .attr("height", h + pad);
+        .attr("width", w + padding_left + 20)
+        .attr("height", h + padding_top + 200);
 
 var param = "ZZ_Chemie.csv";
         
@@ -16,6 +16,8 @@ d3.csv("data/" + param, function(error, data) {
     data.forEach(function (d) {
         if(d.source != "" && d.target != "") { // Daten sind fehlerhaft warum?
           // return only the distinct / unique nodes
+          var source = d.source.substring(0, 10);
+
           nodesByName[d.source] = {name: d.source, group: d.skat };
           if(d.target != "null"){
             nodesByName[d.target] = {name: d.target, group: d.tkat  };
@@ -32,20 +34,18 @@ d3.csv("data/" + param, function(error, data) {
 
 var nodesNames = d3.map(nodesByName).keys().sort(d3.ascending);
 var nodesCount = nodesNames.length;
- 
-/*
-var x = d3.scale.linear().domain([0, nodesCount - 1]).range([left_pad, w-pad]),
-    y = d3.scale.linear().domain([0, nodesCount - 1]).range([pad, h-pad*2]);
- */
 
-var x = d3.scale.linear().domain([0, nodesCount - 1]).range([left_pad, w + left_pad]),
-    y = d3.scale.linear().domain([0, nodesCount - 1]).range([pad, h]);
+//console.log("nodesCount= " + nodesCount);
 
-console.log(x);
+var x = d3.scale.linear().domain([0, nodesCount]).range([padding_left, w + padding_left]),
+    y = d3.scale.linear().domain([0, nodesCount]).range([padding_top, h + padding_top]);
 
-var xAxis = d3.svg.axis().scale(x).orient("bottom")
+//console.log(x);
+
+var xAxis = d3.svg.axis().scale(x).orient("top")
         .ticks(nodesCount) 
         .tickFormat(function (d, i) {
+            console.log(d);
             return nodesNames[i];
         }),
     yAxis = d3.svg.axis().scale(y).orient("left")
@@ -56,16 +56,22 @@ var xAxis = d3.svg.axis().scale(x).orient("bottom")
  
 svg.append("g")
     .attr("class", "axis")
-    .attr("transform", "translate(0, "+(h-pad)+")")
+    .attr("transform", "translate(0, " + (padding_top + h) + ")")
     .call(xAxis)
       .selectAll("text")
+      .attr("y", 0)
+      .attr("x", 9)
+      .attr("dy", "-1em")
       .attr("transform", "rotate(90)")
+      .style("text-anchor", "start")
+      //.attr("text-anchor","begin")
+      //.attr("transform", "rotate(90)")
       // vertical labels - http://bl.ocks.org/mbostock/4403522
     ;
  
 svg.append("g")
         .attr("class", "axis")
-        .attr("transform", "translate("+(left_pad-pad)+", 0)")
+        .attr("transform", "translate("+(padding_left)+", 0)")
     .call(yAxis);
 
 /* 
