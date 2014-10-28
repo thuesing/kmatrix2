@@ -1,4 +1,4 @@
-var w = h = 650,
+var w = h = 650,   // http://bl.ocks.org/mbostock/3019563  - margin convention
     padding_top = 10, // oben
     padding_left = 300,
     label_pad = 100; // space for long labelnames
@@ -40,19 +40,32 @@ var nodesCount = nodesNames.length;
 var x = d3.scale.linear().domain([0, nodesCount]).range([padding_left, w + padding_left]),
     y = d3.scale.linear().domain([0, nodesCount]).range([padding_top, h + padding_top]);
 
-//console.log(x);
 
-var xAxis = d3.svg.axis().scale(x).orient("top")
+//console.log(x);
+// http://bl.ocks.org/mbostock/3892919  - how to use ticks
+// http://www.d3noob.org/2013/01/adding-grid-lines-to-d3js-graph.html
+
+var xAxis = d3.svg.axis().scale(x).orient("top") // tick direction
         .ticks(nodesCount) 
         .tickFormat(function (d, i) {
-            console.log(d);
             return nodesNames[i];
         }),
     yAxis = d3.svg.axis().scale(y).orient("left")
         .ticks(nodesCount) 
         .tickFormat(function (d, i) {
             return nodesNames[i];
-        });
+        }),
+    xGrid = d3.svg.axis().scale(x).orient("top") // double axes for grid
+        .ticks(nodesCount)
+        .tickSize(-h, 0, 0)
+        .tickFormat("")  // hide labels
+        ,
+    yGrid = d3.svg.axis().scale(y).orient("left")
+        .ticks(nodesCount)
+        .tickSize(-w, 0, 0)
+        .tickFormat("") // hide labels
+        ;
+
  
 svg.append("g")
     .attr("class", "axis")
@@ -73,6 +86,16 @@ svg.append("g")
         .attr("class", "axis")
         .attr("transform", "translate("+(padding_left)+", 0)")
     .call(yAxis);
+
+
+svg.append("g")         
+    .attr("class", "grid")
+    .call(xGrid); 
+
+svg.append("g")         
+    .attr("class", "grid")
+    .attr("transform", "translate("+(padding_left)+", 0)")
+    .call(yGrid); 
 
 /* 
 svg.append("text")
