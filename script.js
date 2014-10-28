@@ -1,36 +1,40 @@
-var nodesByName = {}, links = [];
-var param = "ZZ_Chemie.csv";
-d3.csv("data/" + param, function(error, data) {
-  data.forEach(function (d) {
-
-    if(d.source != "" && d.target != "") { // Daten sind fehlerhaft warum?
-      // return only the distinct / unique nodes
-      nodesByName[d.source] = {name: d.source, group: d.skat };
-      if(d.target != "null"){
-        nodesByName[d.target] = {name: d.target, group: d.tkat  };
-        links.push({ "source": d.source,
-                           "target": d.target,
-                           "value": parseFloat(d.vuvalue),
-                           "count": parseInt(d.pathes)
-        });
-      }
-    } else {
-      // console.log("WARN: data error for - " + d.toString());
-    }
- });
-
-console.log(nodesByName);
-
 var w = 940,
     h = 300,
     pad = 20,
-    left_pad = 100,
-    Data_url = '/data.json';
+    left_pad = 100;
  
-var svg = d3.select("#punchcard")
+var svg = d3.select("#chart")
         .append("svg")
         .attr("width", w)
         .attr("height", h);
+
+var param = "ZZ_Chemie.csv";
+        
+var nodesByName = {}, links = [];
+d3.csv("data/" + param, function(error, data) {
+
+    data.forEach(function (d) {
+        if(d.source != "" && d.target != "") { // Daten sind fehlerhaft warum?
+          // return only the distinct / unique nodes
+          nodesByName[d.source] = {name: d.source, group: d.skat };
+          if(d.target != "null"){
+            nodesByName[d.target] = {name: d.target, group: d.tkat  };
+            links.push({ "source": d.source,
+                               "target": d.target,
+                               "value": parseFloat(d.vuvalue),
+                               "count": parseInt(d.pathes)
+            });
+          }
+        } else {
+          // console.log("WARN: data error for - " + d.toString());
+        }
+    });
+
+console.log(nodesByName);
+
+
+var nodesNames = d3.map(nodesByName).keys();
+var nodesCount = nodesNames.length;
  
 var x = d3.scale.linear().domain([0, 23]).range([left_pad, w-pad]),
     y = d3.scale.linear().domain([0, 6]).range([pad, h-pad*2]);
@@ -62,7 +66,7 @@ svg.append("text")
     .text("Loading ...")
     .attr("x", function () { return w/2; })
     .attr("y", function () { return h/2-5; });
- 
+/* TODO 
 d3.json(Data_url, function (punchcard_data) {
     var max_r = d3.max(punchcard_data.map(
                        function (d) { return d[2]; })),
@@ -84,5 +88,6 @@ d3.json(Data_url, function (punchcard_data) {
         .attr("r", function (d) { return r(d[2]); });
 
 }); // d3.json
+*/
 
 }); // d3.csv call
