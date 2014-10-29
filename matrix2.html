@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<!-- Dot Matrix, dot size by number, color by AVG value --> 
+<style>
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #eee;
+    shape-rendering: crispEdges;
+}
+ 
+.axis text {
+    font-family: sans-serif;
+    font-size: 11px;
+}
+ 
+.loading {
+    font-family: sans-serif;
+    font-size: 15px;
+}
+ 
+.circle {
+    fill: #222;
+}
+
+
+.grid .tick {
+    stroke: lightgrey;
+    opacity: 0.7;
+}
+.grid path {
+      stroke-width: 0;
+}
+</style>
+
+<!--
+   see  SCATTERPLOT FROM http://swizec.com/blog/quick-scatterplot-tutorial-for-d3-js/swizec/5337
+   -->
+ 
+<div id="chart"></div>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="d3script.js"></script>
+
