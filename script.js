@@ -49,6 +49,7 @@ var nodesNames = d3.map(nodesByName).keys().sort(d3.ascending);
 var nodesCount = nodesNames.length;
 
 //console.log("nodesCount= " + nodesCount);
+console.log(nodesNames);
 
 var x = d3.scale.linear().domain([0, nodesCount]).range([0, w]),
     y = d3.scale.linear().domain([0, nodesCount]).range([0, h]);
@@ -102,6 +103,23 @@ svg.append("g")
     .attr("class", "grid")
    // .attr("transform", "translate("+(padding_left)+", 0)")
     .call(yGrid); 
+
+// circles
+ var r = d3.scale.linear()
+            .domain([0, d3.max(links.map(function (d) {return d.count;}))])
+            .range([2, 12]);
+
+svg.selectAll("circle")
+    .data(links)
+    .enter()
+    .append("circle")
+    .attr("class", "circle")
+    .attr("cx", function (d) { return x(nodesNames.indexOf(d.target));})
+    .attr("cy", function (d) { return y(nodesNames.indexOf(d.source)); })
+    .transition()
+    .duration(800)
+    .attr("r", function (d) { return r(d.count); });
+
 
 /* TODO 
 svg.append("text")
