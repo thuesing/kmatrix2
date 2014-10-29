@@ -1,14 +1,27 @@
-var w = h = 650,   // http://bl.ocks.org/mbostock/3019563  - margin convention
-    padding_top = 10, // oben
-    padding_left = 300,
-    label_pad = 100; // space for long labelnames
- 
-var svg = d3.select("#chart")
-        .append("svg")
-        .attr("width", w + padding_left + 20)
-        .attr("height", h + padding_top + 200);
-
 var param = "ZZ_Chemie.csv";
+
+// margin convention
+// http://bl.ocks.org/mbostock/3019563 
+// First define the margin object with properties for the four sides (clockwise from the top, as in CSS).
+
+var margin = {top: 20, right: 10, bottom: 300, left: 300};
+
+// Then define width and height as the inner dimensions of the chart area.
+// has to be w = h = 650
+var w = 960 - margin.left - margin.right,
+    h = 970 - margin.top - margin.bottom;
+
+// Lastly, define svg as a G element that translates the origin to the top-left corner of the chart area.
+
+var svg = d3.select("#chart").append("svg")
+    .attr("width", w + margin.left + margin.right)
+    .attr("height", h + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+// With this convention, all subsequent code can ignore margins.
+
+// Load  data 
         
 var nodesByName = {}, links = [];
 d3.csv("data/" + param, function(error, data) {
@@ -37,15 +50,13 @@ var nodesCount = nodesNames.length;
 
 //console.log("nodesCount= " + nodesCount);
 
-var x = d3.scale.linear().domain([0, nodesCount]).range([padding_left, w + padding_left]),
-    y = d3.scale.linear().domain([0, nodesCount]).range([padding_top, h + padding_top]);
+var x = d3.scale.linear().domain([0, nodesCount]).range([0, w]),
+    y = d3.scale.linear().domain([0, nodesCount]).range([0, h]);
 
-
-//console.log(x);
 // http://bl.ocks.org/mbostock/3892919  - how to use ticks
 // http://www.d3noob.org/2013/01/adding-grid-lines-to-d3js-graph.html
 
-var xAxis = d3.svg.axis().scale(x).orient("top") // tick direction
+var xAxis = d3.svg.axis().scale(x).orient("bottom") // tick direction
         .ticks(nodesCount) 
         .tickFormat(function (d, i) {
             return nodesNames[i];
@@ -66,10 +77,10 @@ var xAxis = d3.svg.axis().scale(x).orient("top") // tick direction
         .tickFormat("") // hide labels
         ;
 
- 
-svg.append("g")
+// vertical labels - http://bl.ocks.org/mbostock/4403522 
+svg.append("g")  
     .attr("class", "axis")
-    .attr("transform", "translate(0, " + (padding_top + h) + ")")
+    .attr("transform", "translate(0, " + (h) + ")")
     .call(xAxis)
       .selectAll("text")
       .attr("y", 0)
@@ -77,16 +88,11 @@ svg.append("g")
       .attr("dy", "-1em")
       .attr("transform", "rotate(90)")
       .style("text-anchor", "start")
-      //.attr("text-anchor","begin")
-      //.attr("transform", "rotate(90)")
-      // vertical labels - http://bl.ocks.org/mbostock/4403522
     ;
  
 svg.append("g")
         .attr("class", "axis")
-        .attr("transform", "translate("+(padding_left)+", 0)")
     .call(yAxis);
-
 
 svg.append("g")         
     .attr("class", "grid")
@@ -94,17 +100,16 @@ svg.append("g")
 
 svg.append("g")         
     .attr("class", "grid")
-    .attr("transform", "translate("+(padding_left)+", 0)")
+   // .attr("transform", "translate("+(padding_left)+", 0)")
     .call(yGrid); 
 
-/* 
+/* TODO 
 svg.append("text")
     .attr("class", "loading")
     .text("Loading ...")
     .attr("x", function () { return w/2; })
     .attr("y", function () { return h/2-5; });
-*/
-/* TODO 
+
 d3.json(Data_url, function (punchcard_data) {
     var max_r = d3.max(punchcard_data.map(
                        function (d) { return d[2]; })),
