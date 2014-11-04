@@ -4,7 +4,7 @@ var param = "ZZ_Klima-Land.csv";
 // http://bl.ocks.org/mbostock/3019563 
 // First define the margin object with properties for the four sides (clockwise from the top, as in CSS).
 
-var margin = {top: 20, right: 10, bottom: 300, left: 300};
+var margin = {top: 30, right: 20, bottom: 300, left: 300};
 
 // Then define width and height as the inner dimensions of the chart area.
 // has to be w = h = 650
@@ -74,12 +74,12 @@ var xAxis = d3.svg.axis().scale(x).orient("bottom") // tick direction
     xGrid = d3.svg.axis().scale(x).orient("top") // double axes for grid
         .ticks(xNames.length)
         .tickSize(-h, 0, 0)
-       // .tickFormat("")  // hide labels
+       //.tickFormat("")  // hide labels
         ,
-    yGrid = d3.svg.axis().scale(y).orient("left")
+    yGrid = d3.svg.axis().scale(y).orient("right")
         .ticks(yNames.length)
         .tickSize(-w, 0, 0)
-       // .tickFormat("") // hide labels
+        //.tickFormat("") // hide labels
         ;
 
 // vertical labels - http://bl.ocks.org/mbostock/4403522 
@@ -89,24 +89,34 @@ svg.append("g")
     .call(xAxis)
       .selectAll("text")
       .attr("y", 0)
-      .attr("x", 9) // distance text/axis
-      .attr("dy", "0.5em") // center text on tick
+      .attr("x", 12)        // distance text/axis
+      .attr("dy", "0.5em")  // center text on tick
       .attr("transform", "rotate(90)")
       .style("text-anchor", "start")
     ;
  
 svg.append("g")
-        .attr("class", "axis")
-    .call(yAxis);
+    .attr("class", "axis")
+    .call(yAxis)
+      .selectAll("text")
+      .attr("y", 0)
+      .attr("x", -12)        // distance text/axis;
+    ;
+
+svg.append("g")         
+    .attr("class", "grid")    
+    .call(xGrid)
+      .selectAll("text")
+      .attr("y", -12)        // distance text/axis
+    ; 
 
 svg.append("g")         
     .attr("class", "grid")
-    .call(xGrid); 
-
-svg.append("g")         
-    .attr("class", "grid")
-   // .attr("transform", "translate("+(padding_left)+", 0)")
-    .call(yGrid); 
+    .attr("transform", "translate("+ w +", 0)")
+    .call(yGrid)
+      .selectAll("text")
+      .attr("x", 12)        // distance text/axis
+    ; 
 
 // circles
 var r = d3.scale.linear()
