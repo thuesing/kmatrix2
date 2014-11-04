@@ -1,4 +1,4 @@
-var param = "ZZ_Chemie.csv";
+var param = "ZZ_Klima-Land.csv";
 
 // margin convention
 // http://bl.ocks.org/mbostock/3019563 
@@ -23,57 +23,61 @@ var svg = d3.select("#chart").append("svg")
 
 // Load  data 
         
-var nodesByName = {}, links = [];
+var sourcesByName = {}, targetsByName = {}, links = [];
+
 d3.csv("data/" + param, function(error, data) {
 
     data.forEach(function (d) {
-        if(d.source != "" && d.target != "") { // Warum sind Daten fehlerhaft?
+        if(d.source != "" && d.target != "" && d.target != "null") { // Warum sind Daten fehlerhaft?
           // return only the distinct / unique nodes
-          var source = d.source.substring(0, 10);
-
-          nodesByName[d.source] = {name: d.source, group: d.skat };
-          if(d.target != "null"){
-            nodesByName[d.target] = {name: d.target, group: d.tkat  };
-            links.push({ "source": d.source,
-                               "target": d.target,
-                               "value": parseFloat(d.vuvalue),
-                               "count": parseInt(d.pathes)
-            });
-          }
+          // TODO var source = d.source.substring(0, 10);
+          // count sources and targets
+          var source = sourcesByName[d.source] || (sourcesByName[d.source] = {name: d.source, count: 0 });
+              source.count += 1;
+              console.log(source);
+          var target = targetsByName[d.target] || (targetsByName[d.target] = {name: d.target, count: 0 });
+              target.count += 1;
+          links.push({ "source": d.source,
+                       "target": d.target,
+                       "value": parseFloat(d.vuvalue),
+                       "count": parseInt(d.pathes)});
         } else {
           // console.log("WARN: data error for - " + d.toString());
         }
     });
 
-var nodesNames = d3.map(nodesByName).keys().sort(d3.ascending);
-var nodesCount = nodesNames.length;
+console.log(sourcesByName);
+// TODO order by count
+var yNames = d3.map(sourcesByName).keys().sort(d3.ascending);
+var xNames = d3.map(targetsByName).keys().sort(d3.ascending);
+// TODO var nodesCount = nodesNames.length;
 
-//console.log("nodesCount= " + nodesCount);
-console.log(nodesNames);
+//console.log(nodesNames);
 
-var x = d3.scale.linear().domain([0, nodesCount]).range([0, w]),
-    y = d3.scale.linear().domain([0, nodesCount]).range([0, h]);
+var x = d3.scale.linear().domain([0, xNames.length]).range([0, w]),
+    y = d3.scale.linear().domain([0, yNames.length]).range([0, h]);
 
 // http://bl.ocks.org/mbostock/3892919  - how to use ticks
 // http://www.d3noob.org/2013/01/adding-grid-lines-to-d3js-graph.html
 
 var xAxis = d3.svg.axis().scale(x).orient("bottom") // tick direction
-        .ticks(nodesCount) 
+        .ticks(xNames.length) 
         .tickFormat(function (d, i) {
-            return nodesNames[i];
+            return xNames[i];
         }),
     yAxis = d3.svg.axis().scale(y).orient("left")
-        .ticks(nodesCount) 
+        .ticks(yNames.length) 
         .tickFormat(function (d, i) {
-            return nodesNames[i];
+            return yNames[i];
         }),
+
     xGrid = d3.svg.axis().scale(x).orient("top") // double axes for grid
-        .ticks(nodesCount)
+        .ticks(xNames.length)
         .tickSize(-h, 0, 0)
         .tickFormat("")  // hide labels
         ,
     yGrid = d3.svg.axis().scale(y).orient("left")
-        .ticks(nodesCount)
+        .ticks(yNames.length)
         .tickSize(-w, 0, 0)
         .tickFormat("") // hide labels
         ;
@@ -118,8 +122,8 @@ svg.selectAll("circle")
     .enter()
     .append("circle")
     .attr("class", "circle")
-    .attr("cx", function (d) { return x(nodesNames.indexOf(d.target));})
-    .attr("cy", function (d) { return y(nodesNames.indexOf(d.source)); })
+    .attr("cx", function (d) { return x(xNames.indexOf(d.target));})
+    .attr("cy", function (d) { return y(yNames.indexOf(d.source)); })
     .transition()
     .duration(800)
     .attr("r", function (d) { return r(d.count); })
