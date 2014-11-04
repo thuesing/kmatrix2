@@ -54,8 +54,8 @@ var xNames = d3.map(targetsByName).keys().sort(d3.ascending);
 
 //console.log(nodesNames);
 
-var x = d3.scale.linear().domain([0, xNames.length]).range([0, w]),
-    y = d3.scale.linear().domain([0, yNames.length]).range([0, h]);
+var x = d3.scale.linear().domain([0, xNames.length - 1]).range([0, w]),
+    y = d3.scale.linear().domain([0, yNames.length - 1]).range([0, h]);
 
 // http://bl.ocks.org/mbostock/3892919  - how to use ticks
 // http://www.d3noob.org/2013/01/adding-grid-lines-to-d3js-graph.html
@@ -74,12 +74,12 @@ var xAxis = d3.svg.axis().scale(x).orient("bottom") // tick direction
     xGrid = d3.svg.axis().scale(x).orient("top") // double axes for grid
         .ticks(xNames.length)
         .tickSize(-h, 0, 0)
-        .tickFormat("")  // hide labels
+       // .tickFormat("")  // hide labels
         ,
     yGrid = d3.svg.axis().scale(y).orient("left")
         .ticks(yNames.length)
         .tickSize(-w, 0, 0)
-        .tickFormat("") // hide labels
+       // .tickFormat("") // hide labels
         ;
 
 // vertical labels - http://bl.ocks.org/mbostock/4403522 
