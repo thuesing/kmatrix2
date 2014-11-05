@@ -1,5 +1,6 @@
-var param = "ZZ_Land-Klima.csv";
-
+var datafile = "ZZ_Land-Klima.csv";
+var axesLabels = datafile.split("_")[1].split(".")[0].split("-");
+console.log(axesLabels);
 // margin convention
 // http://bl.ocks.org/mbostock/3019563 
 // First define the margin object with properties for the four sides (clockwise from the top, as in CSS).
@@ -25,7 +26,7 @@ var svg = d3.select("#chart").append("svg")
         
 var sourcesByName = {}, targetsByName = {}, links = [];
 
-d3.csv("data/" + param, function(error, data) {
+d3.csv("data/" + datafile, function(error, data) {
 
     data.forEach(function (d) {
 
@@ -106,6 +107,22 @@ var xAxis = d3.svg.axis().scale(x).orient("top") // tick direction
         //.tickFormat("") // hide labels
         ;
 
+// Axes Labels
+svg.append("text")
+    .attr("class", "caption")
+    .attr("y", -20)
+    .text(axesLabels[1]);
+svg.append("text")
+    .attr("class", "caption")
+    .attr("y", -20)
+    //.attr("x", -20)
+    .text(axesLabels[0])
+    .attr("transform", "rotate(-90)")
+    .style("text-anchor", "end")
+    ;
+// End Axes Labels
+
+
 // vertical labels - http://bl.ocks.org/mbostock/4403522 
 svg.append("g")  
     .attr("class", "axis")
@@ -174,8 +191,11 @@ var circles = svg.selectAll("circle")
         return "yellow"; 
       }*/
     })
-    .style("stroke", "white")  
+    .style("stroke", "white")
+    //.append("text").text(function(d){return "HALLO"})      
     ;
+
+
 
 
 /* TODO 
