@@ -174,6 +174,7 @@ var circles = svg.selectAll("circle")
         return "yellow"; 
       }*/
     })
+    .style("stroke", "white")  
     ;
 
 
