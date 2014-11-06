@@ -1,4 +1,5 @@
-var datafile = "ZZ_Land-Klima.csv";
+// TODO some stats, Anzahl links
+var datafile = "ZZ_Klima-Land.csv";
 var axesLabels = datafile.split("_")[1].split(".")[0].split("-");
 console.log(axesLabels);
 // margin convention
@@ -170,10 +171,12 @@ var color = d3.scale.linear()
     .domain([-1, 0, 1])
     .range(["green", "yellow", "red"]);
 
-var circles = svg.selectAll("circle")
+var link = svg.selectAll("circle")
     .data(links) // traversed data
     .enter()
-    .append("circle")
+    .append("g").attr("class", "link");    
+
+    link.append("circle")
     .attr("class", "circle")
     .attr("cx", function (d) { return x(xNames.indexOf(d.target));})
     .attr("cy", function (d) { return y(yNames.indexOf(d.source)); })
@@ -192,14 +195,28 @@ var circles = svg.selectAll("circle")
       }*/
     })
     .style("stroke", "white")
-    //.append("text").text(function(d){return "HALLO"})      
     ;
 
-
-
+    link.append("text").text(
+      function(d){
+        if(d.count > 99) return (d.count/1000).toString().substring(0,3);
+      }
+    )
+    .attr("class", "linklabel")
+    .attr("x", function (d) { return x(xNames.indexOf(d.target));})
+    .attr("y", function (d) { return y(yNames.indexOf(d.source)); })
+    .attr("dx", 2)
+    .attr("dy", 2) 
+    .style("text-anchor", "center")
+    //.attr("transform", "rotate(-45)," )
+    .attr("transform", function(d) { 
+      //console.log(d);
+      return "rotate( 45, " + x(xNames.indexOf(d.target)) + "," + y(yNames.indexOf(d.source)) + ")";
+     })
+    ;
 
 /* TODO 
-svg.append("text")
+svg.append("text") 
     .attr("class", "loading")
     .text("Loading ...")
     .attr("x", function () { return w/2; })
