@@ -46,9 +46,12 @@
 }
 </style>
 
-<!--
-   see  SCATTERPLOT FROM http://swizec.com/blog/quick-scatterplot-tutorial-for-d3-js/swizec/5337
-   -->
+<script>
+var datafile = "ZZ-Sektor-Verkehr-Verkehr.csv";
+var labels = datafile.split(".")[0].split("-");
+var axesLabels = [labels[2], labels[3]];
+console.log(labels);
+</script>
  
 <div id="chart"></div>
 <script src="http://d3js.org/d3.v3.min.js"></script>
