@@ -34,7 +34,6 @@ d3.csv("data/" + datafile, function(error, data) {
 
 var sourcesByName = {}, targetsByName = {}, links = [];
 var w = h = 0;
-var nodeDistance = 20;
 
     data.forEach(function (d) {
 
@@ -58,19 +57,23 @@ var nodeDistance = 20;
         }
     });
 
-// TODO order by count
+// Declarations based on data
 var yNames = d3.map(sourcesByName).keys().sort(d3.ascending);
 var xNames = d3.map(targetsByName).keys().sort(d3.ascending);
-// TODO var nodesCount = nodesNames.length;
-console.log(sourcesByName);
 
-//console.log(targetsByName);
+var maxLinkPosCount = d3.max(links, function (d) { return d.positiv; });
+var maxLinkCount = d3.max(links, function (d) { return d.count; });
+var sumLinkCount = d3.sum(links, function (d) { return d.count; });
 
-w = xNames.length * nodeDistance;
+console.log("Max Pos Link: " +  maxLinkPosCount);
+console.log("Max Link Count: " +  maxLinkCount);
+console.log("Sum Links Count: " +  sumLinkCount);
+
+// Setup SVG Elem width, height
+var nodeDistance = 20;
+w = xNames.length * nodeDistance; 
 h = yNames.length * nodeDistance;
-
-var svg = setSvgCanvas(w,h);
-
+var svg = setupSvgElement(w,h);
 
 var x = d3.scale.linear().domain([0, xNames.length - 1]).range([0, w]),
     y = d3.scale.linear().domain([0, yNames.length - 1]).range([0, h]);
@@ -178,6 +181,10 @@ var color = d3.scale.linear()
     .domain([-1, 0, 1])
     .range(["green", "yellow", "red"]);
 
+var opacity = d3.scale.linear()
+    .domain([10,maxLinkPosCount])  
+    .range([0.3,1]); // 0 (completely transparent) to 1 (solid colour).   
+
 var link = svg.selectAll("circle")
     .data(links) // traversed data
     .enter()
@@ -191,23 +198,26 @@ var link = svg.selectAll("circle")
     .duration(800)
     .attr("r", function (d) { return r(d.count); })
     .style("fill", function(d) { 
-      return color(d.value);
-      /*
-      if(d.z > 0) {
+      //return color(d.value);
+      if(d.positiv > 0) {
         return "red";
-      } else if(d.z < 0) {
-        return "green"; 
       } else {
-        return "yellow"; 
-      }*/
+        return "green"; 
+      } 
     })
+    .style("opacity", function(d) { 
+      if(d.positiv > 0) {
+        return opacity(d.positiv);
+      }
+    })    
     .style("stroke", "white")
     ;
 
     link.append("text").text(
       function(d){
         // if(d.count > 99) return (d.count/1000).toString().substring(0,3);
-        if(d.positiv > 100) return (d.positiv/100).toString().substring(0,3);
+        //if(d.positiv > 100) return (d.positiv/100).toString().substring(0,3);
+        if(d.positiv > 100) return (d.positiv).toString();
       }
     )
     .attr("class", "linklabel") // rotate Label for readability
@@ -225,8 +235,10 @@ var link = svg.selectAll("circle")
 
 }); // d3.csv call
 
-function setSvgCanvas(width,height) {
-  // First define the margin object with properties for the four sides (clockwise from the top, as in CSS).
+function setupSvgElement(width,height) { // based on node count, without margins
+// margin convention
+// http://bl.ocks.org/mbostock/3019563 
+// First define the margin object with properties for the four sides (clockwise from the top, as in CSS).
  
 var margin = {top: 300, right: 300, bottom: 300, left: 300};
 
