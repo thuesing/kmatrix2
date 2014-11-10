@@ -5,13 +5,16 @@ console.log(axesLabels);
 // margin convention
 // http://bl.ocks.org/mbostock/3019563 
 // First define the margin object with properties for the four sides (clockwise from the top, as in CSS).
-
+/*
 var margin = {top: 300, right: 300, bottom: 300, left: 300};
 
 // Then define width and height as the inner dimensions of the chart area.
-// has to be w = h = 650
-var w = 1800 - margin.left - margin.right,
-    h = 1800 - margin.top - margin.bottom;
+
+var mdim = 600; // matrix width, height
+var w = mdim + margin.left + margin.right,
+    h = mdim + margin.top + margin.bottom;
+
+console.log("w, h: " + w + ", " + h);    
 
 // Lastly, define svg as a G element that translates the origin to the top-left corner of the chart area.
 
@@ -22,12 +25,16 @@ var svg = d3.select("#chart").append("svg")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 // With this convention, all subsequent code can ignore margins.
+*/
 
 // Load  data 
         
-var sourcesByName = {}, targetsByName = {}, links = [];
 
 d3.csv("data/" + datafile, function(error, data) {
+
+var sourcesByName = {}, targetsByName = {}, links = [];
+var w = h = 0;
+var nodeDistance = 20;
 
     data.forEach(function (d) {
 
@@ -36,17 +43,10 @@ d3.csv("data/" + datafile, function(error, data) {
           var source = sourcesByName[d.source] || 
                       (sourcesByName[d.source] = {name: d.source, count: 0 });
               source.count += 1;
-              //sourcesByName[d.source] = source;
-               //console.log(sourcesByName[d.source]);
-               //console.log(sourcesByName["Allg. THG-Emissionsreduktion"]);
-               //console.log(d.source);
-               //console.log(source);
 
           var target = targetsByName[d.target] || 
                       (targetsByName[d.target] = {name: d.target, count: 0 });
               target.count += 1;
-              //console.log(targetsByName[d.target]);
-              //targetsByName[d.target] = target;
 
           links.push({ "source": d.source,
                        "target": d.target,
@@ -65,6 +65,12 @@ var xNames = d3.map(targetsByName).keys().sort(d3.ascending);
 console.log(sourcesByName);
 
 //console.log(targetsByName);
+
+w = xNames.length * nodeDistance;
+h = yNames.length * nodeDistance;
+
+var svg = setSvgCanvas(w,h);
+
 
 var x = d3.scale.linear().domain([0, xNames.length - 1]).range([0, w]),
     y = d3.scale.linear().domain([0, yNames.length - 1]).range([0, h]);
@@ -166,7 +172,7 @@ svg.append("g")
 // circles
 var r = d3.scale.linear()
             .domain([0, d3.max(links.map(function (d) {return d.count;}))])
-            .range([2, 12]);
+            .range([(nodeDistance/5), (nodeDistance/1.5)]);
 
 var color = d3.scale.linear()
     .domain([-1, 0, 1])
@@ -218,3 +224,29 @@ var link = svg.selectAll("circle")
     ;
 
 }); // d3.csv call
+
+function setSvgCanvas(width,height) {
+  // First define the margin object with properties for the four sides (clockwise from the top, as in CSS).
+ 
+var margin = {top: 300, right: 300, bottom: 300, left: 300};
+
+// Then define width and height as the inner dimensions of the chart area.
+
+var mdim = 600; // matrix width, height
+var w = width + margin.left + margin.right,
+    h = height + margin.top + margin.bottom;
+
+console.log("w, h from nodecount: " + w + ", " + h);    
+
+// Lastly, define svg as a G element that translates the origin to the top-left corner of the chart area.
+
+var svg = d3.select("#chart").append("svg")
+    .attr("width", w + margin.left + margin.right)
+    .attr("height", h + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+// With this convention, all subsequent code can ignore margins.
+
+return svg;
+}
