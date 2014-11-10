@@ -1,6 +1,6 @@
 // TODO some stats, Anzahl links
-var datafile = "ZZ_Klima-Land.csv";
-var axesLabels = datafile.split("_")[1].split(".")[0].split("-");
+// var datafile = "ZZ_Klima-Land.csv";
+// var axesLabels = datafile.split("_")[1].split(".")[0].split("-");
 console.log(axesLabels);
 // margin convention
 // http://bl.ocks.org/mbostock/3019563 
@@ -10,8 +10,8 @@ var margin = {top: 300, right: 300, bottom: 300, left: 300};
 
 // Then define width and height as the inner dimensions of the chart area.
 // has to be w = h = 650
-var w = 1200 - margin.left - margin.right,
-    h = 1200 - margin.top - margin.bottom;
+var w = 1800 - margin.left - margin.right,
+    h = 1800 - margin.top - margin.bottom;
 
 // Lastly, define svg as a G element that translates the origin to the top-left corner of the chart area.
 
@@ -51,6 +51,7 @@ d3.csv("data/" + datafile, function(error, data) {
           links.push({ "source": d.source,
                        "target": d.target,
                        "value": parseFloat(d.vuvalue),
+                       "positiv": parseInt(d.positiv),
                        "count": parseInt(d.pathes)});
         } else {
           // console.log("WARN: data error for - " + d.toString());
@@ -199,10 +200,11 @@ var link = svg.selectAll("circle")
 
     link.append("text").text(
       function(d){
-        if(d.count > 99) return (d.count/1000).toString().substring(0,3);
+        // if(d.count > 99) return (d.count/1000).toString().substring(0,3);
+        if(d.positiv > 100) return (d.positiv/100).toString().substring(0,3);
       }
     )
-    .attr("class", "linklabel")
+    .attr("class", "linklabel") // rotate Label for readability
     .attr("x", function (d) { return x(xNames.indexOf(d.target));})
     .attr("y", function (d) { return y(yNames.indexOf(d.source)); })
     .attr("dx", 2)
@@ -214,35 +216,5 @@ var link = svg.selectAll("circle")
       return "rotate( 45, " + x(xNames.indexOf(d.target)) + "," + y(yNames.indexOf(d.source)) + ")";
      })
     ;
-
-/* TODO 
-svg.append("text") 
-    .attr("class", "loading")
-    .text("Loading ...")
-    .attr("x", function () { return w/2; })
-    .attr("y", function () { return h/2-5; });
-
-d3.json(Data_url, function (punchcard_data) {
-    var max_r = d3.max(punchcard_data.map(
-                       function (d) { return d[2]; })),
-        r = d3.scale.linear()
-            .domain([0, d3.max(punchcard_data, function (d) { return d[2]; })])
-            .range([0, 12]);
- 
-    svg.selectAll(".loading").remove();
- 
-    svg.selectAll("circle")
-        .data(punchcard_data)
-        .enter()
-        .append("circle")
-        .attr("class", "circle")
-        .attr("cx", function (d) { return x(d[1]); })
-        .attr("cy", function (d) { return y(d[0]); })
-        .transition()
-        .duration(800)
-        .attr("r", function (d) { return r(d[2]); });
-
-}); // d3.json
-*/
 
 }); // d3.csv call
