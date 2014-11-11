@@ -65,12 +65,21 @@ var maxLinkPosCount = d3.max(links, function (d) { return d.positiv; });
 var maxLinkCount = d3.max(links, function (d) { return d.count; });
 var sumLinkCount = d3.sum(links, function (d) { return d.count; });
 
+var legende = d3.select("#legende");
+legende.append("h2").text(labels[2] + ", " + labels[3]);
+legende.append("div").text("Data: " + datafile);
+legende.append("div").text("Verbindungen gesamt: " + sumLinkCount);
+legende.append("div").text("Max. Verbindungen: " + maxLinkCount);
+legende.append("div").text("Max. verst\u00e4rk. Verbindungen: " + maxLinkPosCount);
+legende.append("div").attr("id","kgreen").text(" 0 verst\u00e4rk. Verbindungen");
+legende.append("div").attr("id","kred").text(" 1 - " + maxLinkPosCount + " verst\u00e4rk. Verbindungen");
+
 console.log("Max Pos Link: " +  maxLinkPosCount);
 console.log("Max Link Count: " +  maxLinkCount);
 console.log("Sum Links Count: " +  sumLinkCount);
 
 // Setup SVG Elem width, height
-var nodeDistance = 20;
+var nodeDistance = 15;
 w = xNames.length * nodeDistance; 
 h = yNames.length * nodeDistance;
 var svg = setupSvgElement(w,h);
@@ -182,7 +191,7 @@ var color = d3.scale.linear()
     .range(["green", "yellow", "red"]);
 
 var opacity = d3.scale.linear()
-    .domain([10,maxLinkPosCount])  
+    .domain([10 ,maxLinkPosCount])  
     .range([0.3,1]); // 0 (completely transparent) to 1 (solid colour).   
 
 var link = svg.selectAll("circle")
@@ -244,7 +253,7 @@ var margin = {top: 300, right: 300, bottom: 300, left: 300};
 
 // Then define width and height as the inner dimensions of the chart area.
 
-var mdim = 600; // matrix width, height
+//var mdim = 600; // matrix width, height
 var w = width + margin.left + margin.right,
     h = height + margin.top + margin.bottom;
 

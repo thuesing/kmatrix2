@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #eee;
+    shape-rendering: crispEdges;
+}
+ 
+.axis text, .grid text {
+    font-family: sans-serif;
+    font-size: 11px;
+}
+
+.linklabel {
+    font-family: sans-serif;
+    font-size: 10px;
+    fill: #2F4F4F;
+}
+
+
+.caption {
+    font-family: sans-serif;
+    font-size: 90px;
+    font-weight: normal;
+    fill: lightgrey;
+}
+ 
+.loading {
+    font-family: sans-serif;
+    font-size: 15px;
+}
+ 
+.circle {
+    fill: #222;
+}
+
+
+.grid .tick {
+    stroke: lightgrey;
+    opacity: 0.7;
+}
+.grid path {
+      stroke-width: 0;
+}
+
+div#legende {
+    padding: 50px 0 0 50px;
+    position: absolute;
+    font-family: sans-serif;
+    font-size: 14px;
+    color: darkgrey;
+}
+
+h1 {
+    color: darkgrey;
+    font-size: 14px;   
+}
+
+h2 {
+    color: #2F4F4F;
+    font-size: 20px;   
+}
+
+#kgreen:before {
+    content: ' \25CF';
+    font-size: 20px;
+    color: green;
+}
+#kred:before {
+    content: ' \25CF';
+    font-size: 20px;
+    color: red;
+}
+
+</style>
+<script type="text/javascript">
+
+
+function getQueryParam() // only filename after ?
+{
+       var query = window.location.search.substring(1);
+       var vars = query.split("?");
+       return(query);
+}
+
+</script>
+<script>
+console.log("file: " + getQueryParam());
+
+//var datafile = "ZZ-Sektor-Verkehr-Verkehr.csv";
+// ZZ-Sektor-Verkehr-Industrie & Gewerbe.csv
+var datafile = decodeURIComponent(getQueryParam());
+var labels = datafile.split(".")[0].split("-");
+var axesLabels = [labels[2], labels[3]];
+console.log(labels);
+</script>
+<div id="legende">
+    <h1>Ziel/Ziel</h1>
+ </div> 
+<div id="chart"></div>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="d3script.js"></script>
+
+<!--
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script type="text/javascript">
+     $(document).ready(function() { 
+          //$("#legende").append("HALLO" + axesLabels[0] + "," + maxLinkPosCount); 
+     });
+</script>
+-->
+
