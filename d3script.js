@@ -1,6 +1,7 @@
 // TODO some stats, Anzahl links
 // var datafile = "ZZ_Klima-Land.csv";
-// var axesLabels = datafile.split("_")[1].split(".")[0].split("-");
+// var datafile = "ZZ_Klima-Land.csv";
+//var axesLabels = datafile.split("_")[1].split(".")[0].split("-");
 console.log(axesLabels);
 // margin convention
 // http://bl.ocks.org/mbostock/3019563 
@@ -47,13 +48,18 @@ var w = h = 0;
                       (targetsByName[d.target] = {name: d.target, count: 0 });
               target.count += 1;
 
+          var positiv_prozent = Math.ceil((100 * d.positiv) / d.pathes);
+          //console.log("positiv_prozent - " + positiv_prozent);
+
           links.push({ "source": d.source,
                        "target": d.target,
                        "value": parseFloat(d.vuvalue),
                        "positiv": parseInt(d.positiv),
-                       "count": parseInt(d.pathes)});
+                       "count": parseInt(d.pathes),
+                       "positiv_prozent": positiv_prozent
+                     });
         } else {
-          // console.log("WARN: data error for - " + d.toString());
+          console.log("WARN: data error for - " + d.toString());
         }
     });
 
@@ -65,6 +71,8 @@ var maxLinkPosCount = d3.max(links, function (d) { return d.positiv; });
 var maxLinkCount = d3.max(links, function (d) { return d.count; });
 var sumLinkCount = d3.sum(links, function (d) { return d.count; });
 
+console.log("max. pos count: " + maxLinkPosCount);
+
 var legende = d3.select("#legende");
 legende.append("h2").text(labels[2] + ", " + labels[3]);
 legende.append("div").text("Data: " + datafile);
@@ -73,6 +81,8 @@ legende.append("div").text("Max. Verbindungen: " + maxLinkCount);
 legende.append("div").text("Max. verst\u00e4rk. Verbindungen: " + maxLinkPosCount);
 legende.append("div").attr("id","kgreen").text(" 0 verst\u00e4rk. Verbindungen");
 legende.append("div").attr("id","kred").text(" 1 - " + maxLinkPosCount + " verst\u00e4rk. Verbindungen");
+legende.append("br");
+legende.append("div").attr("id","prozente").text("Ziffern i.d. Matrix: Prozent positiv");
 
 console.log("Max Pos Link: " +  maxLinkPosCount);
 console.log("Max Link Count: " +  maxLinkCount);
@@ -185,14 +195,17 @@ svg.append("g")
 var r = d3.scale.linear()
             .domain([0, d3.max(links.map(function (d) {return d.count;}))])
             .range([(nodeDistance/5), (nodeDistance/1.5)]);
-
+/*
 var color = d3.scale.linear()
     .domain([-1, 0, 1])
     .range(["green", "yellow", "red"]);
 
 var opacity = d3.scale.linear()
     .domain([10 ,maxLinkPosCount])  
-    .range([0.3,1]); // 0 (completely transparent) to 1 (solid colour).   
+    .range([0.3,1]); // 0 (completely transparent) to 1 (solid colour).   */
+var opacity = d3.scale.linear()
+    .domain([0 ,100])  
+    .range([0.1,1]); // 0 (completely transparent) to 1 (solid colour).   
 
 var link = svg.selectAll("circle")
     .data(links) // traversed data
@@ -216,7 +229,7 @@ var link = svg.selectAll("circle")
     })
     .style("opacity", function(d) { 
       if(d.positiv > 0) {
-        return opacity(d.positiv);
+        return opacity(d.positiv_prozent);
       }
     })    
     .style("stroke", "white")
@@ -224,9 +237,7 @@ var link = svg.selectAll("circle")
 
     link.append("text").text(
       function(d){
-        // if(d.count > 99) return (d.count/1000).toString().substring(0,3);
-        //if(d.positiv > 100) return (d.positiv/100).toString().substring(0,3);
-        if(d.positiv > 100) return (d.positiv).toString();
+       if(d.positiv > 0)  return (d.positiv_prozent).toString();
       }
     )
     .attr("class", "linklabel") // rotate Label for readability
