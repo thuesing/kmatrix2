@@ -11,7 +11,6 @@ d3.csv("data/" + datafile, function(error, data) {
     parseData(data);
     buildViz();
     buildLegend();
-
 }); // d3.csv call
 
 function buildViz() {
