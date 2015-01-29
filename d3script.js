@@ -2,7 +2,7 @@
 // var datafile = "ZZ_Klima-Land.csv";
 // var datafile = "ZZ_Klima-Land.csv";
 //var axesLabels = datafile.split("_")[1].split(".")[0].split("-");
-console.log(axesLabels);
+if(datafile == null) alert("Error: No datafile!");
 // margin convention
 // http://bl.ocks.org/mbostock/3019563 
 // First define the margin object with properties for the four sides (clockwise from the top, as in CSS).
@@ -74,7 +74,8 @@ var sumLinkCount = d3.sum(links, function (d) { return d.count; });
 console.log("max. pos count: " + maxLinkPosCount);
 
 var legende = d3.select("#legende");
-legende.append("h2").text(labels[2] + ", " + labels[3]);
+//legende.append("h2").text(labels[2] + ", " + labels[3]);
+// legende.append("h2").text("Dünger-Einsatz - Regulierung, Alle");
 legende.append("div").text("Data: " + datafile);
 legende.append("div").text("Verbindungen gesamt: " + sumLinkCount);
 legende.append("div").text("Max. Verbindungen: " + maxLinkCount);
@@ -89,10 +90,12 @@ console.log("Max Link Count: " +  maxLinkCount);
 console.log("Sum Links Count: " +  sumLinkCount);
 
 // Setup SVG Elem width, height
-var nodeDistance = 15;
+var nodeDistance = 15; // ABS
 w = xNames.length * nodeDistance; 
 h = yNames.length * nodeDistance;
 var svg = setupSvgElement(w,h);
+
+console.log("yNames.length: " + yNames.length);
 
 var x = d3.scale.linear().domain([0, xNames.length - 1]).range([0, w]),
     y = d3.scale.linear().domain([0, yNames.length - 1]).range([0, h]);
@@ -101,7 +104,7 @@ var x = d3.scale.linear().domain([0, xNames.length - 1]).range([0, w]),
 // http://www.d3noob.org/2013/01/adding-grid-lines-to-d3js-graph.html
 
 var xAxis = d3.svg.axis().scale(x).orient("top") // tick direction
-        .ticks(xNames.length) 
+        .ticks(xNames.length -1) 
         .tickFormat(function (d, i) {            
           if(xNames[i].length > 40) {
             return xNames[i].substring(0, 38) + "..";
@@ -110,7 +113,7 @@ var xAxis = d3.svg.axis().scale(x).orient("top") // tick direction
           }
         }),
     yAxis = d3.svg.axis().scale(y).orient("left")
-        .ticks(yNames.length) 
+        .ticks(yNames.length -1) 
         .tickFormat(function (d, i) {
           if(yNames[i].length > 40) {
             return yNames[i].substring(0, 38) + "..";
@@ -138,18 +141,20 @@ var xAxis = d3.svg.axis().scale(x).orient("top") // tick direction
         ;
 
 // Axes Labels
-svg.append("text")
-    .attr("class", "caption")
-    .attr("y", -20)
-    .text(axesLabels[1]);
-svg.append("text")
-    .attr("class", "caption")
-    .attr("y", -20)
-    //.attr("x", -20)
-    .text(axesLabels[0])
-    .attr("transform", "rotate(-90)")
-    .style("text-anchor", "end")
-    ;
+if(axesLabels) {
+  svg.append("text")
+      .attr("class", "caption")
+      .attr("y", -20)
+      .text(axesLabels[1]);
+  svg.append("text")
+      .attr("class", "caption")
+      .attr("y", -20)
+      //.attr("x", -20)
+      .text(axesLabels[0])
+      .attr("transform", "rotate(-90)")
+      .style("text-anchor", "end")
+      ;
+}
 // End Axes Labels
 
 
@@ -195,6 +200,9 @@ svg.append("g")
 var r = d3.scale.linear()
             .domain([0, d3.max(links.map(function (d) {return d.count;}))])
             .range([(nodeDistance/5), (nodeDistance/1.5)]);
+
+
+//console.log("Max conn: " + d3.max(links.map(function (d) {return d.count;})));
 /*
 var color = d3.scale.linear()
     .domain([-1, 0, 1])
@@ -218,7 +226,8 @@ var link = svg.selectAll("circle")
     .attr("cy", function (d) { return y(yNames.indexOf(d.source)); })
     .transition()
     .duration(800)
-    .attr("r", function (d) { return r(d.count); })
+    .attr("r", function (d) { 
+      return r(d.count); })
     .style("fill", function(d) { 
       //return color(d.value);
       if(d.positiv > 0) {
