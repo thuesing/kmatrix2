@@ -1,94 +1,20 @@
-// TODO some stats, Anzahl links
-// var datafile = "ZZ_Klima-Land.csv";
-// var datafile = "ZZ_Klima-Land.csv";
-//var axesLabels = datafile.split("_")[1].split(".")[0].split("-");
 if(datafile == null) alert("Error: No datafile!");
-// margin convention
-// http://bl.ocks.org/mbostock/3019563 
-// First define the margin object with properties for the four sides (clockwise from the top, as in CSS).
-/*
-var margin = {top: 300, right: 300, bottom: 300, left: 300};
-
-// Then define width and height as the inner dimensions of the chart area.
-
-var mdim = 600; // matrix width, height
-var w = mdim + margin.left + margin.right,
-    h = mdim + margin.top + margin.bottom;
-
-console.log("w, h: " + w + ", " + h);    
-
-// Lastly, define svg as a G element that translates the origin to the top-left corner of the chart area.
-
-var svg = d3.select("#chart").append("svg")
-    .attr("width", w + margin.left + margin.right)
-    .attr("height", h + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-// With this convention, all subsequent code can ignore margins.
-*/
 
 // Load  data 
-        
-
-d3.csv("data/" + datafile, function(error, data) {
-
 var sourcesByName = {}, targetsByName = {}, links = [];
-var w = h = 0;
+var w = h = 0;        
+var xNames, yNames;
 
-    data.forEach(function (d) {
+// Load data
+d3.csv("data/" + datafile, function(error, data) {
+    if(error) console.log(error);
+    parseData(data);
+    buildViz();
+    buildLegend();
 
-        if(d.source != "" && d.target != "" && d.target != "null") { // Warum sind Daten fehlerhaft?
-          // count sources and targets
-          var source = sourcesByName[d.source] || 
-                      (sourcesByName[d.source] = {name: d.source, count: 0 });
-              source.count += 1;
+}); // d3.csv call
 
-          var target = targetsByName[d.target] || 
-                      (targetsByName[d.target] = {name: d.target, count: 0 });
-              target.count += 1;
-
-          var positiv_prozent = Math.ceil((100 * d.positiv) / d.pathes);
-          //console.log("positiv_prozent - " + positiv_prozent);
-
-          links.push({ "source": d.source,
-                       "target": d.target,
-                       "value": parseFloat(d.vuvalue),
-                       "positiv": parseInt(d.positiv),
-                       "count": parseInt(d.pathes),
-                       "positiv_prozent": positiv_prozent
-                     });
-        } else {
-          console.log("WARN: data error for - " + d.toString());
-        }
-    });
-
-// Declarations based on data
-var yNames = d3.map(sourcesByName).keys().sort(d3.ascending);
-var xNames = d3.map(targetsByName).keys().sort(d3.ascending);
-
-var maxLinkPosCount = d3.max(links, function (d) { return d.positiv; });
-var maxLinkCount = d3.max(links, function (d) { return d.count; });
-var sumLinkCount = d3.sum(links, function (d) { return d.count; });
-
-console.log("max. pos count: " + maxLinkPosCount);
-
-var legende = d3.select("#legende");
-//legende.append("h2").text(labels[2] + ", " + labels[3]);
-// legende.append("h2").text("Dünger-Einsatz - Regulierung, Alle");
-legende.append("div").text("Data: " + datafile);
-legende.append("div").text("Verbindungen gesamt: " + sumLinkCount);
-legende.append("div").text("Max. Verbindungen: " + maxLinkCount);
-legende.append("div").text("Max. verst\u00e4rk. Verbindungen: " + maxLinkPosCount);
-legende.append("div").attr("id","kgreen").text(" 0 verst\u00e4rk. Verbindungen");
-legende.append("div").attr("id","kred").text(" 1 - " + maxLinkPosCount + " verst\u00e4rk. Verbindungen");
-legende.append("br");
-legende.append("div").attr("id","prozente").text("Ziffern i.d. Matrix: Prozent positiv");
-
-console.log("Max Pos Link: " +  maxLinkPosCount);
-console.log("Max Link Count: " +  maxLinkCount);
-console.log("Sum Links Count: " +  sumLinkCount);
-
+function buildViz() {
 // Setup SVG Elem width, height
 var nodeDistance = 15; // ABS
 w = xNames.length * nodeDistance; 
@@ -127,9 +53,7 @@ var xAxis = d3.svg.axis().scale(x).orient("top") // tick direction
         .tickSize(-h, 0, 0)
         .tickFormat(function (d, i) {
           //console.log(targetsByName[xNames[i]]);
-          //return targetsByName[xNames[i]].count;
         }) 
-       //.tickFormat("")  // hide labels
         ,
     yGrid = d3.svg.axis().scale(y).orient("right")
         .ticks(yNames.length)
@@ -137,7 +61,6 @@ var xAxis = d3.svg.axis().scale(x).orient("top") // tick direction
         .tickFormat(function (d, i) {
           //console.log(sourcesByName[yNames[i]]);
         })
-        //.tickFormat("") // hide labels
         ;
 
 // Axes Labels
@@ -200,17 +123,6 @@ svg.append("g")
 var r = d3.scale.linear()
             .domain([0, d3.max(links.map(function (d) {return d.count;}))])
             .range([(nodeDistance/5), (nodeDistance/1.5)]);
-
-
-//console.log("Max conn: " + d3.max(links.map(function (d) {return d.count;})));
-/*
-var color = d3.scale.linear()
-    .domain([-1, 0, 1])
-    .range(["green", "yellow", "red"]);
-
-var opacity = d3.scale.linear()
-    .domain([10 ,maxLinkPosCount])  
-    .range([0.3,1]); // 0 (completely transparent) to 1 (solid colour).   */
 var opacity = d3.scale.linear()
     .domain([0 ,100])  
     .range([0.1,1]); // 0 (completely transparent) to 1 (solid colour).   
@@ -262,7 +174,61 @@ var link = svg.selectAll("circle")
      })
     ;
 
-}); // d3.csv call
+} // buildViz
+
+function buildLegend() {
+
+  var maxLinkPosCount = d3.max(links, function (d) { return d.positiv; });
+  var maxLinkCount = d3.max(links, function (d) { return d.count; });
+  var sumLinkCount = d3.sum(links, function (d) { return d.count; });
+  console.log("Max Link Count: " +  maxLinkCount);
+  console.log("Max Pos Link Count: " +  maxLinkPosCount);
+  console.log("Sum Links Count: " +  sumLinkCount);
+
+  var legende = d3.select("#legende");
+  //legende.append("h2").text(labels[2] + ", " + labels[3]);
+  // legende.append("h2").text("Dünger-Einsatz - Regulierung, Alle");
+  legende.append("div").text("Data: " + datafile);
+  legende.append("div").text("Verbindungen gesamt: " + sumLinkCount);
+  legende.append("div").text("Max. Verbindungen: " + maxLinkCount);
+  legende.append("div").text("Max. verst\u00e4rk. Verbindungen: " + maxLinkPosCount);
+  legende.append("div").attr("id","kgreen").text(" 0 verst\u00e4rk. Verbindungen");
+  legende.append("div").attr("id","kred").text(" 1 - " + maxLinkPosCount + " verst\u00e4rk. Verbindungen");
+  legende.append("br");
+  legende.append("div").attr("id","prozente").text("Ziffern i.d. Matrix: Prozent positiv");
+}
+function parseData(data) { // from d3.csv
+
+    data.forEach(function (d) {
+
+        if(d.source != "" && d.target != "" && d.target != "null") { // Warum sind Daten fehlerhaft?
+          // count sources and targets
+          var source = sourcesByName[d.source] || 
+                      (sourcesByName[d.source] = {name: d.source, count: 0 });
+              source.count += 1;
+
+          var target = targetsByName[d.target] || 
+                      (targetsByName[d.target] = {name: d.target, count: 0 });
+              target.count += 1;
+
+          var positiv_prozent = Math.ceil((100 * d.positiv) / d.pathes);
+          //console.log("positiv_prozent - " + positiv_prozent);
+
+          links.push({ "source": d.source,
+                       "target": d.target,
+                       "value": parseFloat(d.vuvalue),
+                       "positiv": parseInt(d.positiv),
+                       "count": parseInt(d.pathes),
+                       "positiv_prozent": positiv_prozent
+                     });
+        } else {
+          console.log("WARN: data error for - " + d.toString());
+        }
+    });
+
+    yNames = d3.map(sourcesByName).keys().sort(d3.ascending);
+    xNames = d3.map(targetsByName).keys().sort(d3.ascending);
+} // parseData
 
 function setupSvgElement(width,height) { // based on node count, without margins
 // margin convention
@@ -291,3 +257,28 @@ var svg = d3.select("#chart").append("svg")
 
 return svg;
 }
+
+
+/* margin convention
+// http://bl.ocks.org/mbostock/3019563 
+// First define the margin object with properties for the four sides (clockwise from the top, as in CSS).
+var margin = {top: 300, right: 300, bottom: 300, left: 300};
+
+// Then define width and height as the inner dimensions of the chart area.
+
+var mdim = 600; // matrix width, height
+var w = mdim + margin.left + margin.right,
+    h = mdim + margin.top + margin.bottom;
+
+console.log("w, h: " + w + ", " + h);    
+
+// Lastly, define svg as a G element that translates the origin to the top-left corner of the chart area.
+
+var svg = d3.select("#chart").append("svg")
+    .attr("width", w + margin.left + margin.right)
+    .attr("height", h + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+// With this convention, all subsequent code can ignore margins.
+*/
