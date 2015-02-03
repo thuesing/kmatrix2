@@ -98,7 +98,7 @@ function getQueryParams() // only filename after ?
 var params = getQueryParams();
 console.log("params: " + params);
 var datafile = params[0]|| null; // filename
-datafile = "ZZP.Matrix.2.csv";
+datafile = "ZZ.Chemie.Matrix.csv";
 
 var headline = decodeURIComponent(params[1]) || null;  // Headline
 var axesLabels = params[2] ? params[2].split("/") : null;
@@ -124,6 +124,7 @@ var axesLabels = params[2] ? params[2].split("/") : null;
 
 
 
+<script src="buildDcStuff.js"></script>
 <script src="d3script.js"></script>
 <script type="text/javascript">
 function hallo(msg) {
