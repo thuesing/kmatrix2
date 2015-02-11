@@ -1,3 +1,4 @@
+<link href="dcstyle.css" media="all" rel="stylesheet" />
 <script type="text/javascript" src="https://rawgithub.com/NickQiZhu/dc.js/master/web/js/crossfilter.js"></script>
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src='components/dc.js' type='text/javascript'></script>
@@ -5,13 +6,69 @@
 var data;
 var test;
 // Load data
-d3.csv("data/dev.csv", function(error, data) {
+d3.csv("data/big.csv", function(error, data) {
     if(error) console.log(error);
     data = parseData(data);
-    //console.log(data);
+    console.log(data);
 
     var cf = crossfilter(data);
 
+    var zsektor = cf.dimension(function(d){ return d.zsektor;});
+    var zsektorGroup = zsektor.groupAll().reduce(
+      reduceAdd, reduceRemove, reduceInitial
+      ).value();
+
+    // hack to make dc.js charts work
+    zsektorGroup.all = function() {
+      var newObject = [];
+      for (var key in this) {
+        if (this.hasOwnProperty(key) && key != "all") {
+          newObject.push({
+            key: key,
+            value: this[key]
+          });
+        }
+      }
+      return newObject;
+    }
+
+    var chart = dc.rowChart("#chart");
+        chart.renderLabel(true).width(300).height(300)
+        .dimension(zsektor)
+        .group(zsektorGroup)
+        .filterHandler(function(dimension, filter){     
+            dimension.filter(function(d) {
+            return chart.filter() != null ? d.indexOf(chart.filter()) >= 0 : true;}); // perform filtering
+            return filter; // return the actual filter value
+           })
+        .xAxis().ticks(0);
+
+
+       // For datatable
+    var pfadeDim = cf.dimension(function (d) { return d.zname; });
+    var dataTable = dc.dataTable("#dc-table");   
+    dataTable.width(800).height(800)
+        .dimension(pfadeDim)
+        .group(function(d) { return "Pfade"
+         })
+        .size(100)
+        .columns([
+            function(d) { return d.zname; },
+            function(d) { return d.mname; },
+            function(d) { return d.vname; },
+            function(d) { return d.uname; },
+            function(d) { return d.pname; },
+            function(d) { return d.zename; },
+            function(d) { return d.vudescr; }
+
+            //function(d) { return '<a href=\"http://maps.google.com/maps?z=12&t=m&q=loc:' + d.latitude + '+' + d.longitude +"\" target=\"_blank\">Map</a>"}
+        ])
+        .sortBy(function(d){ return d.zname; })
+        // (optional) sort order, :default ascending
+        .order(d3.ascending);
+
+    dc.renderAll();
+    /*
     var tags = cf.dimension(function(d){ return d.zsektor;});
     var tagsGroup = tags.group();
 
@@ -25,7 +82,7 @@ d3.csv("data/dev.csv", function(error, data) {
     dc.renderAll();
 
 
-    /*
+    
     var ndx = crossfilter(data);
     var nameDim  = ndx.dimension(function(d) {return d.zname;});
     test = nameDim.filter("THG-Emissionsreduktion allgemein"); 
@@ -52,6 +109,11 @@ function parseData(data) { // from d3.csv
 
     data.forEach(function (d) {
 
+        d.zsektor = d.zsektor.substring(1, d.zsektor.length - 1);
+        d.zsektor = d.zsektor.split(",");
+        d.zesektor = d.zesektor.substring(1, d.zesektor.length - 1);
+        d.zesektor = d.zesektor.split(",");
+
         var row = {zname: d.zname,zsektor: d.zsektor ,mname: d.mname,vname: d.vname,vudescr: d.vudescr,uname: d.uname,pname: d.pname,zename: d.zename,zesektor: d.zesektor};
         res.push(row);
 
@@ -60,10 +122,27 @@ function parseData(data) { // from d3.csv
     return res;
 } // parseData
 
+function reduceAdd(p, v) {
+  v.zsektor.forEach (function(val, idx) {
+     p[val] = (p[val] || 0) + 1; //increment counts
+  });
+  return p;
+}
 
+function reduceRemove(p, v) {
+  v.zsektor.forEach (function(val, idx) {
+     p[val] = (p[val] || 0) - 1; //decrement counts
+  });
+  return p;
+
+}
+
+function reduceInitial() {
+  return {};  
+}
 
 </script>
 
 <div id="chart"></div>
 
-<div id="chart2"></div>
+<div id="dc-table"></div>
