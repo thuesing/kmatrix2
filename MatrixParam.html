@@ -95,6 +95,7 @@ function getQueryParams() // only filename after ?
 *  http://localhost:4000/MatrixParam.html?[Datafile]+[Header]+[Label1/Label2]
 */
 var params = getQueryParams();
+if(params[0].length < 1) alert("Usage: MatrixParam.html?[Datafile]+[Header]+[Label1/Label2]");
 console.log("params: " + params);
 var datafile = params[0]|| null; // filename
 var headline = decodeURIComponent(params[1]) || null;  // Headline
