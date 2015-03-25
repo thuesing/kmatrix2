@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<!--
+
+OK!
+ http://spin.atomicobject.com/2014/01/21/convert-svg-to-png/
+
+-->
+<meta charset="utf-8">
+<style>
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #eee;
+    shape-rendering: crispEdges;
+}
+ 
+.axis text, .grid text {
+    font-family: sans-serif;
+    font-size: 11px;
+}
+
+.linklabel {
+    font-family: sans-serif;
+    font-size: 10px;
+    fill: #2F4F4F;
+}
+
+
+.caption {
+    font-family: sans-serif;
+    font-size: 90px;
+    font-weight: normal;
+    fill: lightgrey;
+}
+ 
+.loading {
+    font-family: sans-serif;
+    font-size: 15px;
+}
+ 
+.circle {
+    fill: #222;
+}
+
+
+.grid .tick {
+    stroke: lightgrey;
+    opacity: 0.7;
+}
+.grid path {
+      stroke-width: 0;
+}
+
+div#legende {
+    padding: 50px 0 0 50px;
+    position: absolute;
+    font-family: sans-serif;
+    font-size: 14px;
+    color: darkgrey;
+}
+
+h1 {
+    color: darkgrey;
+    font-size: 14px;   
+}
+
+h2 {
+    color: #2F4F4F;
+    font-size: 20px;   
+}
+
+#kgreen:before {
+    content: ' \25CF';
+    font-size: 20px;
+    color: green;
+}
+#kred:before {
+    content: ' \25CF';
+    font-size: 20px;
+    color: red;
+}
+
+text.active {
+  fill: red;
+}
+</style>
+<body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="components/jquery.min.js" type="text/javascript"></script>
+<script src='components/bootstrap.min.js' type='text/javascript'></script>
+<script src="components/saveSvgAsPng.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+/*
+ *  http://localhost:4000/MatrixParam.html?[Datafile]+[Header]+[Label1/Label2]
+ */
+function getQueryParams() {
+           var query = window.location.search.substring(1);
+           var vars = query.split("+");
+           //console.log(vars);
+           return(vars);
+  }
+
+var params = getQueryParams();
+// if(params[0].length < 1) alert("Usage: MatrixParam.html?[Datafile]+[Header]+[Label1/Label2]");
+console.log("params: " + params);
+var datafile = params[0]|| "ZZ.Chemie.Matrix.csv"; // filename
+var headline = decodeURIComponent(params[1]) || null;  // Headline
+var axesLabels = params[2] ? params[2].split("/") : null;
+</script>
+<div id="legende">
+    <h1 id="headline">Kohärenzmatrix</h1>
+ </div> 
+<div id="chart"></div>
+<script src="d3script.js"></script>
+<a href="#" id="save">Save Diagram</a>
+<script type="text/javascript">
+d3.select("#save").on("click", function(){
+  var html = d3.select("svg")
+      .attr("version", 1.1)
+      .attr("xmlns", "http://www.w3.org/2000/svg")
+      .attr("style", "background-color: white;")
+      .node()
+      ;
+  saveSvgAsPng(html, "Diagram.png");
+});
+</script>
+
+</body>
+
