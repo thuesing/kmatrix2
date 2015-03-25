@@ -90,40 +90,58 @@ text.active {
 <script src='components/bootstrap.min.js' type='text/javascript'></script>
 <script src="components/saveSvgAsPng.js" type="text/javascript"></script>
 
+<div id="legende">
+    <h1 id="headline">Kohärenzmatrix</h1>
+ </div> 
+<div id="chart"></div>
+<a href="#" id="save">Save Diagram</a>
+
 <script type="text/javascript">
+var datafile, headline, axesLabels; // declare here, not inside $() to acess in getScript script
+
+$(function () { // onReady
+
+
+  var params = getQueryParams();
+  console.log("params: " + params);
+             console.log(params[0]);
+  //var datafile = params[0]|| "ZZ.Chemie.Matrix.csv"; // filename
+
+  datafile = "ZZ.Chemie.Matrix.csv";
+  headline = decodeURIComponent(params[1]) || null;  // Headline
+  axesLabels = params[2] ? params[2].split("/") : null;  
+
+  //then load the JavaScript file
+  $.getScript('d3script.js')
+    .done(function( script, textStatus ) {
+      console.log( textStatus );
+    })
+    .fail(function( jqxhr, settings, exception ) {
+      console.log( exception );
+    });
+
+
+  d3.select("#save").on("click", function(){
+    var html = d3.select("svg")
+        .attr("version", 1.1)
+        .attr("xmlns", "http://www.w3.org/2000/svg")
+        .attr("style", "background-color: white;")
+        .node()
+        ;
+    saveSvgAsPng(html, "Diagram.png");
+  });
+
+}); 
+
 /*
  *  http://localhost:4000/MatrixParam.html?[Datafile]+[Header]+[Label1/Label2]
  */
 function getQueryParams() {
            var query = window.location.search.substring(1);
            var vars = query.split("+");
-           //console.log(vars);
+           if(vars[0].length < 1) alert("Usage: MatrixParam.html?[Datafile]+[Header]+[Label1/Label2]");
            return(vars);
-  }
-
-var params = getQueryParams();
-// if(params[0].length < 1) alert("Usage: MatrixParam.html?[Datafile]+[Header]+[Label1/Label2]");
-console.log("params: " + params);
-var datafile = params[0]|| "ZZ.Chemie.Matrix.csv"; // filename
-var headline = decodeURIComponent(params[1]) || null;  // Headline
-var axesLabels = params[2] ? params[2].split("/") : null;
-</script>
-<div id="legende">
-    <h1 id="headline">Kohärenzmatrix</h1>
- </div> 
-<div id="chart"></div>
-<script src="d3script.js"></script>
-<a href="#" id="save">Save Diagram</a>
-<script type="text/javascript">
-d3.select("#save").on("click", function(){
-  var html = d3.select("svg")
-      .attr("version", 1.1)
-      .attr("xmlns", "http://www.w3.org/2000/svg")
-      .attr("style", "background-color: white;")
-      .node()
-      ;
-  saveSvgAsPng(html, "Diagram.png");
-});
+}
 </script>
 
 </body>
