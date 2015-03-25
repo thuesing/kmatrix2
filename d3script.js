@@ -114,7 +114,7 @@ svg.append("g")
       .style("text-anchor", "start")
 
     ;
- 
+
 svg.append("g")
     .attr("class", "axis yAxis")
     .call(yAxis)
@@ -272,11 +272,13 @@ console.log("w, h plus margins: " + w + ", " + h);
 // Lastly, define svg as a G element that translates the origin to the top-left corner of the chart area.
 
  
+//var svg = d3.select("svg")
 var svg = d3.select("#chart").append("svg")
+    .attr("id", "svg")
     .attr("width", w )
     .attr("height", h )
-  .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    .append("g")
+     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
  
 /*
 var svg = d3.select("#chart").append("svg")
