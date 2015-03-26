@@ -1,11 +1,6 @@
 <!DOCTYPE html>
-<!--
-
-OK!
- http://spin.atomicobject.com/2014/01/21/convert-svg-to-png/
-
--->
 <meta charset="utf-8">
+<link href="components/bootstrap.min.css" rel="stylesheet">
 <style>
 .axis path,
 .axis line {
@@ -54,15 +49,15 @@ OK!
 div#legende {
     color: darkgrey;
     font-family: sans-serif;
-    font-size: 14px;
-    padding: 50px 0 0 50px;
+    font-size: 10px;
+    padding: 0 0 0 50px;
     position: absolute;
-    top: -50px;
+
 }
 
 h1 {
     color: darkgrey;
-    font-size: 14px;   
+    font-size: 22px;   
 }
 
 h2 {
@@ -89,12 +84,19 @@ h1#loading {
     color: blue;
 }
 
+a#save {
+  left: 100px;
+  position: relative;
+}
+
 </style>
+
 <body>
 
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="components/jquery.min.js" type="text/javascript"></script>
 <script src='components/bootstrap.min.js' type='text/javascript'></script>
+<!-- http://spin.atomicobject.com/2014/01/21/convert-svg-to-png/ -->
 <script src="components/saveSvgAsPng.js" type="text/javascript"></script>
 <div id="legende">
     <h1 id="headline">Kohärenzmatrix</h1>
@@ -138,10 +140,10 @@ $(function () { // onReady
 }); 
 
 function afterDiagramLoaded() {
-  //console.log("afterDiagramLoaded");
-  d3.select("#loading").remove();
+  // Loader msg
+  d3.select("#loading").remove(); 
+  // Download Link
   d3.select("body").append("a").attr("href","#").attr("id","save").text("Save Diagram");
-
   d3.select("#save").on("click", function(){
     var html = d3.select("svg")
         .attr("version", 1.1)
@@ -152,21 +154,25 @@ function afterDiagramLoaded() {
     saveSvgAsPng(html, "Diagram.png");
   });
 
-
+/*
+  d3.select("#save").attr("data-toggle","popover");
+  
+  $('[data-toggle="popover"]').popover(); 
+  $("[data-toggle='tooltip']").tooltip(); 
+*/
+  $('#save').popover({
+       title : "Hallo",
+       content : "Click to download the diagram. May take a while.",
+       trigger: 'hover',
+       placement : 'top'
+  });
       
 
 
   /*
       d3.select("#save").attr("visibility", "visible");
       //d3.select("body").append("a").attr("href","#").attr("id","save").text("Save Diagram");
-      d3.select("#save").popover({title : "Hallo"});
-      $("#save").hover(
-        function() {
-          $( this ).popover("show");;
-        }, function() {
-          $( this ).popover("hide");;
-        }
-      );
+
   */
       // <a href="#" class="btn" data-toggle="popover" data-placement="bottom" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus." title="" data-original-title="Popover on bottom">Popover on bottom</a>
       //$('#example').popover(options)  
