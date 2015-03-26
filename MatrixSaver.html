@@ -108,10 +108,8 @@ var datafile = null, axesLabels = null, headline = null; // declare here, not in
 
 $(function () { // onReady
 
-
   var params = getQueryParams();
   console.log("params: " + params);
-             console.log(params[0]);
   
   datafile = params[0]; //|| "ZZ.Chemie.Matrix.csv"; // filename
   
@@ -129,11 +127,20 @@ $(function () { // onReady
   $.getScript('d3script.js')
     .done(function( script, textStatus ) {
       console.log( textStatus );
+      // wait for data load
+      afterDiagramLoaded();
     })
     .fail(function( jqxhr, settings, exception ) {
       console.log( exception );
     });
 
+
+}); 
+
+function afterDiagramLoaded() {
+  //console.log("afterDiagramLoaded");
+  d3.select("#loading").remove();
+  d3.select("body").append("a").attr("href","#").attr("id","save").text("Save Diagram");
 
   d3.select("#save").on("click", function(){
     var html = d3.select("svg")
@@ -145,7 +152,25 @@ $(function () { // onReady
     saveSvgAsPng(html, "Diagram.png");
   });
 
-}); 
+
+      
+
+
+  /*
+      d3.select("#save").attr("visibility", "visible");
+      //d3.select("body").append("a").attr("href","#").attr("id","save").text("Save Diagram");
+      d3.select("#save").popover({title : "Hallo"});
+      $("#save").hover(
+        function() {
+          $( this ).popover("show");;
+        }, function() {
+          $( this ).popover("hide");;
+        }
+      );
+  */
+      // <a href="#" class="btn" data-toggle="popover" data-placement="bottom" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus." title="" data-original-title="Popover on bottom">Popover on bottom</a>
+      //$('#example').popover(options)  
+}
 
 /*
  *  http://localhost:4000/Matrix.html?[Datafile]+[Label1/Label2]+[additional Header]

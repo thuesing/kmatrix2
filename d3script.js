@@ -13,13 +13,8 @@ d3.csv("data/" + datafile, function(error, data) {
       console.log(error);
     } 
     parseData(data);
-    buildViz();
-    
-    d3.select("#loading").remove();
-
+    buildViz();    
     buildLegend();
-
-    d3.select("body").append("a").attr("href","#").attr("id","save").text("Save Diagram");
 
 }); // d3.csv call
 
