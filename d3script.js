@@ -7,13 +7,20 @@ var xNames, yNames;
 
 // Load data
 d3.csv("data/" + datafile, function(error, data) {
+
     if(error) {
       alert("ERROR: data/" + datafile + " not found.");
       console.log(error);
     } 
     parseData(data);
     buildViz();
+    
+    d3.select("#loading").remove();
+
     buildLegend();
+
+    d3.select("body").append("a").attr("href","#").attr("id","save").text("Save Diagram");
+
 }); // d3.csv call
 
 function mouseover(l) {

@@ -83,18 +83,24 @@ h2 {
 text.active {
   fill: red;
 }
+
+h1#loading { 
+    color: blue;
+}
+
 </style>
 <body>
+
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="components/jquery.min.js" type="text/javascript"></script>
 <script src='components/bootstrap.min.js' type='text/javascript'></script>
 <script src="components/saveSvgAsPng.js" type="text/javascript"></script>
-
 <div id="legende">
     <h1 id="headline">Kohärenzmatrix</h1>
+    <h1 id="loading">Loading data..</h1>
+
  </div> 
 <div id="chart"></div>
-<a href="#" id="save">Save Diagram</a>
 
 <script type="text/javascript">
 var datafile = null, axesLabels = null, headline = null; // declare here, not inside $() to acess in getScript script
