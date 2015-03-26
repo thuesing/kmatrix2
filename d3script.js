@@ -63,8 +63,8 @@ var x = d3.scale.linear().domain([0, xNames.length - 1]).range([0, w]),
 var xAxis = d3.svg.axis().scale(x).orient("top") // tick direction
         .ticks(xNames.length -1) 
         .tickFormat(function (d, i) {            
-          if(xNames[i].length > 40) {
-            return xNames[i].substring(0, 38) + "..";
+          if(xNames[i].length > 30) {
+            return xNames[i].substring(0, 30) + "..";
           } else {
             return xNames[i]
           }
@@ -72,8 +72,8 @@ var xAxis = d3.svg.axis().scale(x).orient("top") // tick direction
     yAxis = d3.svg.axis().scale(y).orient("left")
         .ticks(yNames.length -1) 
         .tickFormat(function (d, i) {
-          if(yNames[i].length > 40) {
-            return yNames[i].substring(0, 38) + "..";
+          if(yNames[i].length > 30) {
+            return yNames[i].substring(0, 30) + "..";
           } else {
             return yNames[i]
           }        
