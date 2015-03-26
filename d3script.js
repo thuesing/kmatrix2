@@ -1,5 +1,5 @@
 if(datafile == null) alert("Error: No datafile!");
-
+if(axesLabels == null) console.log("INFO: no Axes Labels given.");;
 // Load  data 
 var sourcesByName = {}, targetsByName = {}, links = [];
 var w = h = 0;        
@@ -7,7 +7,10 @@ var xNames, yNames;
 
 // Load data
 d3.csv("data/" + datafile, function(error, data) {
-    if(error) console.log(error);
+    if(error) {
+      alert("ERROR: data/" + datafile + " not found.");
+      console.log(error);
+    } 
     parseData(data);
     buildViz();
     buildLegend();
