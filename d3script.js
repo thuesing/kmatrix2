@@ -14,10 +14,52 @@ d3.csv("data/" + datafile, function(error, data) {
     } 
     parseData(data);
     buildViz();    
-    buildLegend();
+    buildHtmlLegend();
+    buildSvgLegend();
 
 }); // d3.csv call
 
+function mouseover(l) { 
+  
+
+        d3.selectAll(".xAxis text").classed("active", function(d, i) { 
+          //console.log(l);
+          return i == xNames.indexOf(l.target); });
+        d3.selectAll(".yAxis text").classed("active", function(d, i) { 
+          return i == yNames.indexOf(l.source); });
+
+        var div = d3.select("#tooltip");
+            div.transition()        
+                .duration(100)      
+                .style("opacity", .9); 
+
+            div.html(             
+              "<ul>" +
+              "<li>" + l.source +
+              "<li>" + l.target +
+              "<li>Pfade: " + l.count +
+              "<li>Positiv: " + l.positiv_prozent  + "%" +
+              "</ul>")
+              .style("left", (d3.event.pageX - 12) + "px")     
+              .style("top", (d3.event.pageY + 30) + "px");              
+
+ /*   
+
+               
+            div .html("INFO HERE")  
+                .style("left", (d3.event.pageX - 12) + "px")     
+                .style("top", (d3.event.pageY + 30) + "px");    
+  */
+}
+
+function mouseout(l)  {  
+  var div = d3.select("#tooltip");     
+            div.transition()        
+                .duration(100)      
+                .style("opacity", 0);
+     d3.selectAll("text").classed("active", false);
+}  
+/*
 function mouseover(l) {
   //console.log(p);
   d3.selectAll(".xAxis text").classed("active", function(d, i) { 
@@ -39,8 +81,13 @@ function mouseout() {
    d3.selectAll("text").classed("active", false);
    d3.select("#status").text("");
 }
-
+*/
 function buildViz() {
+// tooltip
+var tooltip = d3.select("body").append("div")   
+    .attr("id", "tooltip")               
+    .style("opacity", 0);
+
 // Setup SVG Elem width, height
 var nodeDistance = 15; // ABS
 w = xNames.length * nodeDistance; 
@@ -205,7 +252,18 @@ var link = svg.selectAll("circle")
 
 } // buildViz
 
-function buildLegend() {
+function buildSvgLegend() {
+  svg = d3.select("#svg");
+  svg.append("text")
+          .attr("x", (width / 2))             
+          .attr("y", 0 - (margin.top / 2))
+          .attr("text-anchor", "middle")  
+          .style("font-size", "16px") 
+          .style("text-decoration", "underline")  
+          .text("Value vs Date Graph");
+}
+
+function buildHtmlLegend() {
 
   var maxLinkPosCount = d3.max(links, function (d) { return d.positiv; });
   var maxLinkCount = d3.max(links, function (d) { return d.count; });

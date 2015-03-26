@@ -89,6 +89,18 @@ a#save {
   position: relative;
 }
 
+div#tooltip {   
+  position: absolute;           
+  text-align: left;           
+  width: 300px;              
+  padding: 2px;             
+  font: 12px sans-serif;        
+  background: #f5f5f5;   
+  border: 0px;      
+  border-radius: 8px;           
+  pointer-events: none;         
+}
+
 </style>
 
 <body>
@@ -144,6 +156,7 @@ function afterDiagramLoaded() {
   d3.select("#loading").remove(); 
   // Download Link
   d3.select("body").append("a").attr("href","#").attr("id","save").text("Save Diagram");
+
   d3.select("#save").on("click", function(){
     var html = d3.select("svg")
         .attr("version", 1.1)
@@ -155,27 +168,13 @@ function afterDiagramLoaded() {
   });
 
 /*
-  d3.select("#save").attr("data-toggle","popover");
-  
-  $('[data-toggle="popover"]').popover(); 
-  $("[data-toggle='tooltip']").tooltip(); 
-*/
   $('#save').popover({
-       title : "Hallo",
        content : "Click to download the diagram. May take a while.",
        trigger: 'hover',
        placement : 'top'
   });
-      
+*/      
 
-
-  /*
-      d3.select("#save").attr("visibility", "visible");
-      //d3.select("body").append("a").attr("href","#").attr("id","save").text("Save Diagram");
-
-  */
-      // <a href="#" class="btn" data-toggle="popover" data-placement="bottom" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus." title="" data-original-title="Popover on bottom">Popover on bottom</a>
-      //$('#example').popover(options)  
 }
 
 /*
