@@ -14,7 +14,7 @@ OK!
     shape-rendering: crispEdges;
 }
  
-.axis text, .grid text {
+.axis text, .grid text , body {
     font-family: sans-serif;
     font-size: 11px;
 }
@@ -97,7 +97,7 @@ text.active {
 <a href="#" id="save">Save Diagram</a>
 
 <script type="text/javascript">
-var datafile, headline, axesLabels; // declare here, not inside $() to acess in getScript script
+var datafile = null, axesLabels = null, headline = null; // declare here, not inside $() to acess in getScript script
 
 $(function () { // onReady
 
@@ -105,11 +105,18 @@ $(function () { // onReady
   var params = getQueryParams();
   console.log("params: " + params);
              console.log(params[0]);
-  //var datafile = params[0]|| "ZZ.Chemie.Matrix.csv"; // filename
+  
+  datafile = params[0]; //|| "ZZ.Chemie.Matrix.csv"; // filename
+  
+  if(params[1]) { 
+    headline = params[1]; 
+    axesLabels = params[1].split("/");
+  }
 
-  datafile = "ZZ.Chemie.Matrix.csv";
-  headline = decodeURIComponent(params[1]) || null;  // Headline
-  axesLabels = params[2] ? params[2].split("/") : null;  
+  if(params[2]) {
+    headline = params[2] + " " + params[1] ;  // Headline legend
+  }
+  //headline = decodeURIComponent(params[1]) || null;  // Headline
 
   //then load the JavaScript file
   $.getScript('d3script.js')
@@ -134,12 +141,12 @@ $(function () { // onReady
 }); 
 
 /*
- *  http://localhost:4000/MatrixParam.html?[Datafile]+[Header]+[Label1/Label2]
+ *  http://localhost:4000/Matrix.html?[Datafile]+[Label1/Label2]+[additional Header]
  */
 function getQueryParams() {
            var query = window.location.search.substring(1);
            var vars = query.split("+");
-           if(vars[0].length < 1) alert("Usage: MatrixParam.html?[Datafile]+[Header]+[Label1/Label2]");
+           if(vars[0].length < 1) alert("Usage: Matrix.html?[Datafile]+[Label1/Label2]+[additional Header]");
            return(vars);
 }
 </script>
