@@ -15,7 +15,7 @@ d3.csv("data/" + datafile, function(error, data) {
     parseData(data);
     buildViz();    
     buildHtmlLegend();
-    buildSvgLegend();
+    // buildSvgLegend(); TODO see 256
 
 }); // d3.csv call
 
@@ -253,6 +253,7 @@ var link = svg.selectAll("circle")
 } // buildViz
 
 function buildSvgLegend() {
+  /* TODO
   svg = d3.select("#svg");
   svg.append("text")
           .attr("x", (width / 2))             
@@ -261,6 +262,7 @@ function buildSvgLegend() {
           .style("font-size", "16px") 
           .style("text-decoration", "underline")  
           .text("Value vs Date Graph");
+          */
 }
 
 function buildHtmlLegend() {
@@ -340,6 +342,7 @@ var svg = d3.select("#chart").append("svg")
     .attr("id", "svg")
     .attr("width", w )
     .attr("height", h )
+    .attr("style", "background-color: white;")
     .append("g")
      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
  
