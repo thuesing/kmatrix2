@@ -1,0 +1,102 @@
+/*
+ * Styles fuer Matrizendarstellung
+ */
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #eee;
+    shape-rendering: crispEdges;
+}
+ 
+.axis text, .grid text , body {
+    font-family: sans-serif;
+    font-size: 11px;
+}
+
+.linklabel {
+    font-family: sans-serif;
+    font-size: 10px;
+    fill: #2F4F4F;
+}
+
+
+.caption {
+    font-family: sans-serif;
+    font-size: 90px;
+    font-weight: normal;
+    fill: lightgrey;
+}
+ 
+.loading {
+    font-family: sans-serif;
+    font-size: 15px;
+}
+ 
+.circle {
+    fill: #222;
+}
+
+
+.grid .tick {
+    stroke: lightgrey;
+    opacity: 0.7;
+}
+.grid path {
+      stroke-width: 0;
+}
+
+div#legende {
+    color: darkgrey;
+    font-family: sans-serif;
+    font-size: 10px;
+    padding: 0 0 0 50px;
+    position: absolute;
+
+}
+
+h1 {
+    color: darkgrey;
+    font-size: 22px;   
+}
+
+h2 {
+    color: #2F4F4F;
+    font-size: 20px;   
+}
+
+#kgreen:before {
+    content: ' \25CF';
+    font-size: 20px;
+    color: green;
+}
+#kred:before {
+    content: ' \25CF';
+    font-size: 20px;
+    color: red;
+}
+
+text.active {
+  fill: red;
+}
+
+h1#loading { 
+    color: blue;
+}
+
+a#save {
+  left: 100px;
+  position: relative;
+}
+
+div#tooltip {   
+  position: absolute;           
+  text-align: left;           
+  width: 300px;              
+  padding: 2px;             
+  font: 12px sans-serif;        
+  background: #f5f5f5;   
+  border: 0px;      
+  border-radius: 8px;           
+  pointer-events: none;         
+}
+
