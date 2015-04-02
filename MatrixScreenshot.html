@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link href="components/bootstrap.min.css" rel="stylesheet">
+<link href="components/matrizen.css" rel="stylesheet">
+<body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="components/jquery.min.js" type="text/javascript"></script>
+<script src='components/bootstrap.min.js' type='text/javascript'></script>
+<!-- http://spin.atomicobject.com/2014/01/21/convert-svg-to-png/ -->
+<script src="components/saveSvgAsPng.js" type="text/javascript"></script>
+<div id="legende">
+    <h1 id="headline">Kohärenzmatrix</h1>
+    <h1 id="loading">Loading data..</h1>
+
+ </div> 
+<div id="chart"></div>
+
+<script type="text/javascript">
+var datafile = null, axesLabels = null, headline = null; // declare here, not inside $() to acess in getScript script
+
+$(function () { // onReady
+
+  var params = getQueryParams();
+  console.log("params: " + params);
+  
+  datafile = params[0]; //|| "ZZ.Chemie.Matrix.csv"; // filename
+  
+  if(params[1]) { 
+    headline = params[1]; 
+    axesLabels = params[1].split("/");
+  }
+
+  if(params[2]) {
+    headline = params[2] + " " + params[1] ;  // Headline legend
+  }
+  //headline = decodeURIComponent(params[1]) || null;  // Headline
+
+  //then load the JavaScript file
+  $.getScript('d3script.js')
+    .done(function( script, textStatus ) {
+      console.log( textStatus );
+      // wait for data load
+      afterDiagramLoaded();
+    })
+    .fail(function( jqxhr, settings, exception ) {
+      console.log( exception );
+    });
+
+
+}); 
+
+function afterDiagramLoaded() {
+  // Loader msg
+  d3.select("#loading").remove(); 
+  // Download Link
+  /*
+  d3.select("body").append("a").attr("href","#").attr("id","save").text("Save Diagram");
+
+  d3.select("#save").on("click", function(){
+    var html = d3.select("svg")
+        .attr("version", 1.1)
+        .attr("xmlns", "http://www.w3.org/2000/svg")
+        .attr("style", "background-color: white;")
+        .node()
+        ;
+    saveSvgAsPng(html, "Diagram.png");
+  });
+  */
+
+/*
+  $('#save').popover({
+       content : "Click to download the diagram. May take a while.",
+       trigger: 'hover',
+       placement : 'top'
+  });
+*/      
+
+}
+
+/*
+ *  http://localhost:4000/Matrix.html?[Datafile]+[Label1/Label2]+[additional Header]
+ */
+function getQueryParams() {
+           var query = window.location.search.substring(1);
+           var vars = query.split("+");
+           if(vars[0].length < 1) alert("Usage: Matrix.html?[Datafile]+[Label1/Label2]+[additional Header]");
+           return(vars);
+}
+</script>
+
+</body>
+
