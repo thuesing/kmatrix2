@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link href="components/bootstrap.min.css" rel="stylesheet">
+<link href="components/matrizen.css" rel="stylesheet">
+<body>
+<!--<script src="http://d3js.org/d3.v3.min.js"></script>-->
+<script src="bower_components/d3.v3.min/index.js"></script>
+<script src="components/jquery.min.js" type="text/javascript"></script>
+<!--
+<div id="legende">
+    <h1 id="headline">Kohärenzmatrix</h1>
+    <h1 id="loading">Loading data..</h1>
+
+ </div> 
+ -->
+<div id="chart"></div>
+
+<script type="text/javascript">
+var datafile = null, axesLabels = null, headline = null; // declare here, not inside $() to acess in getScript script
+
+
+function parseJson() {
+  d3.json("data/ZZ.Ziele.Alle.data.json", function(error, json) {
+
+    if(error) {
+      alert("ERROR:" + error);
+      console.log(error);
+    } 
+    //    console.log(json.results[0].data);
+    parseNodes(json);
+    
+  });
+}
+
+function parseNodes(json) { 
+    var nodesById = {};
+    var idsByName = {};
+
+    var data = json.results[0].data;
+
+    data.forEach(function (d) {
+      var row = d.row;
+      nodesById[row[0]] = row[1]; // map Ziel
+      idsByName[row[1].name] = row[0];
+    });
+    console.log(idsByName);
+}
+
+function parseData(data) { // from d3.csv
+
+    data.forEach(function (d) {
+
+        if(d.source != "" && d.target != "" && d.target != "null") { // Warum sind Daten fehlerhaft?
+          // count sources and targets
+          var source = sourcesByName[d.source] || 
+                      (sourcesByName[d.source] = {name: d.source, count: 0 });
+              source.count += 1;
+
+          var target = targetsByName[d.target] || 
+                      (targetsByName[d.target] = {name: d.target, count: 0 });
+              target.count += 1;
+
+          var positiv_prozent = Math.ceil((100 * d.positiv) / d.pathes);
+          //console.log("positiv_prozent - " + positiv_prozent);
+
+          links.push({ "source": d.source,
+                       "target": d.target,
+                       "value": parseFloat(d.vuvalue),
+                       "positiv": parseInt(d.positiv),
+                       "count": parseInt(d.pathes),
+                       "positiv_prozent": positiv_prozent
+                     });
+        } else {
+          console.log("WARN: data error for - " + d.toString());
+        }
+    });
+
+    yNames = d3.map(sourcesByName).keys().sort(d3.ascending);
+    xNames = d3.map(targetsByName).keys().sort(d3.ascending);
+} // parseData
+
+
+$(function () { // onReady
+parseJson();
+/*
+  var params = getQueryParams();
+  console.log("params: " + params);
+  
+  datafile = params[0]; //|| "ZZ.Chemie.Matrix.csv"; // filename
+  
+  if(params[1]) { 
+    headline = params[1]; 
+    axesLabels = params[1].split("/");
+  }
+
+  if(params[2]) {
+    headline = params[2] + " " + params[1] ;  // Headline legend
+  }
+  //headline = decodeURIComponent(params[1]) || null;  // Headline
+
+  //then load the JavaScript file
+  $.getScript('d3script.js')
+    .done(function( script, textStatus ) {
+      console.log( textStatus );
+      // wait for data load
+      afterDiagramLoaded();
+    })
+    .fail(function( jqxhr, settings, exception ) {
+      console.log( exception );
+    });
+*/
+
+}); 
+
+function afterDiagramLoaded() {
+  // Loader msg
+  d3.select("#loading").remove(); 
+  // Download Link
+  /*
+  d3.select("body").append("a").attr("href","#").attr("id","save").text("Save Diagram");
+
+  d3.select("#save").on("click", function(){
+    var html = d3.select("svg")
+        .attr("version", 1.1)
+        .attr("xmlns", "http://www.w3.org/2000/svg")
+        .attr("style", "background-color: white;")
+        .node()
+        ;
+    saveSvgAsPng(html, "Diagram.png");
+  });
+  */
+
+/*
+  $('#save').popover({
+       content : "Click to download the diagram. May take a while.",
+       trigger: 'hover',
+       placement : 'top'
+  });
+*/      
+
+}
+
+/*
+ *  http://localhost:4000/Matrix.html?[Datafile]+[Label1/Label2]+[additional Header]
+ */
+function getQueryParams() {
+           var query = window.location.search.substring(1);
+           var vars = query.split("+");
+           if(vars[0].length < 1) alert("Usage: Matrix.html?[Datafile]+[Label1/Label2]+[additional Header]");
+           return(vars);
+}
+</script>
+
+</body>
+
